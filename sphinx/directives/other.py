@@ -46,9 +46,30 @@ class TocTree(Directive):
         'includehidden': directives.flag,
         'numbered': int_or_nothing,
         'titlesonly': directives.flag,
+        'condition': str
     }
 
     def run(self):
+
+        # --------------------
+        condition = self.options.get('condition','True')
+        
+        app= self.state.document.settings.env 
+        
+        ns = dict((k, app.config[k]) for k in app.config.values)
+        ns.update(app.config.__dict__.copy())
+
+        try:
+            res = eval(condition, ns)
+        except Exception as err:
+            # handle exceptions in a clean fashion ??
+            return []
+
+
+        if res==False:
+            return []
+
+        # ----------------------
         env = self.state.document.settings.env
         suffixes = env.config.source_suffix
         glob = 'glob' in self.options
