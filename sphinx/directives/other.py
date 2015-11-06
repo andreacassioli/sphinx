@@ -53,9 +53,9 @@ class TocTree(Directive):
 
         # --------------------
         condition = self.options.get('condition','True')
-        
-        app= self.state.document.settings.env 
-        
+
+        app= self.state.document.settings.env
+
         ns = dict((k, app.config[k]) for k in app.config.values)
         ns.update(app.config.__dict__.copy())
 
