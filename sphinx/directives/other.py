@@ -45,8 +45,7 @@ class TocTree(Directive):
         'hidden': directives.flag,
         'includehidden': directives.flag,
         'numbered': int_or_nothing,
-        'titlesonly': directives.flag,
-        'condition': str
+        'titlesonly': directives.flag
     }
 
     def run(self):

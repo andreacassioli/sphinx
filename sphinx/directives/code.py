@@ -167,14 +167,19 @@ class LiteralInclude(Directive):
         'caption': directives.unchanged,
         'name': directives.unchanged,
         'diff': directives.unchanged_required,
+        'skip-if-match': directives.unchanged_required,
     }
 
-    def read_with_encoding(self, filename, document, codec_info, encoding):
+    def read_with_encoding(self, filename, document, codec_info, encoding,
+                           skip_if_match):
         f = None
         try:
             f = codecs.StreamReaderWriter(open(filename, 'rb'), codec_info[2],
                                           codec_info[3], 'strict')
-            lines = f.readlines()
+            if skip_if_match:
+                lines = [ l for l in f.readlines() if skip_if_match in l]
+            else:
+                lines = f.readlines()
             lines = dedent_lines(lines, self.options.get('dedent'))
             return lines
         except (IOError, OSError):
@@ -218,7 +223,7 @@ class LiteralInclude(Directive):
         codec_info = codecs.lookup(encoding)
 
         lines = self.read_with_encoding(filename, document,
-                                        codec_info, encoding)
+                                        codec_info, encoding, remove_line_tag)
         if not isinstance(lines[0], string_types):
             return lines
 
